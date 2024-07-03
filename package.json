@@ -1,0 +1,33 @@
+{
+  "name": "ticketdorm",
+  "version": "1.0.0",
+  "description": "An online ticketing platform",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev" :"nodemon server.js"
+  },
+  "author": "Nenkemun Sophia Jonathan",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "bwip-js": "^4.4.0",
+    "cloudinary": "^2.2.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.4",
+    "nodemailer": "^6.9.14",
+    "nodemon": "^3.1.4",
+    "paystack": "^2.0.1",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.3",
+    "receiptline": "^1.16.1",
+    "zod": "^3.23.8"
+  }
+}
