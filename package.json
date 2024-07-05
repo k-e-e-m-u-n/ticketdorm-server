@@ -9,7 +9,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "author": "Nenkemun Sophia Jonathan",
+  "author": "Nenkemun Sophia Jonathan...",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
