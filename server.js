@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use('/ticketdorm', router)
 
 const startServer  = async () => {
-   const PORT  = process.env.PORT || 3000
+   const PORT  = process.env.PORT || 2000
    connectDB()
    try {
       app.listen(PORT,() => {console.log(`TICKETDORM IS RUNNING ON PORT: ${PORT}`);})
