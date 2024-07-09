@@ -1,5 +1,5 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import qrcode from 'qrcode';
+// import qrcode from 'qrcode';
 import fs from 'fs';
 
 const generateTicketPDF = async (eventDetails, qrCodeData) => {
@@ -7,7 +7,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
     const page = pdfDoc.addPage([600, 300]);
     const { width, height } = page.getSize();
     
-    // Add event details to the PDF
+  
     // const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const boldFont = await pdfDoc.embedFont(StandardFonts.CourierBold);
     const normalFont = await pdfDoc.embedFont(StandardFonts.Courier)
@@ -32,7 +32,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
     borderLineCap: 'Round'
 });
 
-    page.drawText(`Ticketbooth Group Inc`,
+    page.drawText(`Ticketdorm Group Inc`,
          { x: 50, 
            y: height - 50,
            size: 14,
@@ -62,8 +62,8 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
             font:boldFont, 
             color: rgb(0,0,0) 
           });
-          // const infoStartY = height - titleSize - 160; // Starting y position for user and order info
-          // const infoLineHeight = 20; // Line height for user and order info
+          // const infoStartY = height - titleSize - 160; 
+          // const infoLineHeight = 20; 
   
     page.drawText(`ISSUED TO`,
          { x: 50,
@@ -111,14 +111,14 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
             opacity:0.91
           });
   
-    // Add QR code to the PDF
+    
     const qrCodeImage = await pdfDoc.embedPng(qrCodeData);
     page.drawImage(qrCodeImage, { x: width - 150, y: height - 150, width: 100, height: 100 });
   
-    // Serialize the PDF to bytes (a Uint8Array)
+    
     const pdfBytes = await pdfDoc.save();
   
-    // Save the PDF to a file
+   
     fs.writeFileSync('ticket.pdf', pdfBytes);
   
     return pdfBytes;

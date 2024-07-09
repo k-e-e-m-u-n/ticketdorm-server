@@ -1,10 +1,28 @@
-import Ticket from '../models/ticketmodel.js';
+import Event from '../models/eventmodel.js';
 import cloudinaryMediaUpload from '../config/cloudinary.js';
 
 
-export const createTicket = async (req, res) => {
-    const { eventType, eventName, eventDate, eventTime, duration } = req.body;
+export const createEvent = async (req, res) => {
+    const { eventCategory, 
+            eventName, 
+            eventDate, 
+            eventTime, 
+            duration, 
+            eventDescription, 
+            ticketPrice,
+            refundPolicy, 
+            eventLocation, 
+            eventCapacity,
+            eventCoverPhotos
+
+
+        
+           } = req.body;
+
+
     const files = req.files;
+    console.log('Request Body:', req.body);
+    console.log('Uploaded Files:', files);
   
     try {
       if (!files || files.length === 0) {
@@ -19,22 +37,29 @@ export const createTicket = async (req, res) => {
         const result = await cloudinaryMediaUpload(file.path, 'event_cover_photos');
         return result.url;
       }));
+
+      const policy = "Contact organizer for refund"
   
-      const ticket = new Ticket({
-        eventType,
+      const newEvent = new Event({
+        eventCategory,
         eventName,
         eventDate,
         eventTime,
         duration,
-        eventCoverPhotos: uploadedImages,
+        refundPolicy: policy,
+        eventDescription,
+        ticketPrice,
+        eventLocation,
+        eventCapacity,
+        eventCoverPhotos: uploadedImages
       });
   
-      await ticket.save();
+      await newEvent.save();
   
       const response = {
         statusCode: 201,
-        message: 'Ticket created successfully',
-        data: { ticket },
+        message: 'Event created successfully',
+        data: { newEvent },
       };
       return res.status(201).json(response);
     } catch (error) {
@@ -47,13 +72,13 @@ export const createTicket = async (req, res) => {
     }
   };
 
-export const getTickets = async (req, res) => {
+export const getEvents = async (req, res) => {
   try {
-    const tickets = await Ticket.find();
+    const events = await Event.find();
     const response = {
       statusCode: 200,
-      message: 'Tickets fetched successfully',
-      data: { tickets },
+      message: 'events fetched successfully',
+      data: { events },
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -66,21 +91,21 @@ export const getTickets = async (req, res) => {
   }
 };
 
-export const getTicketById = async (req, res) => {
+export const getEventById = async (req, res) => {
   const { id } = req.params;
   try {
-    const ticket = await Ticket.findById(id);
-    if (!ticket) {
+    const event = await Event.findById(id);
+    if (!event) {
       const response = {
         statusCode: 404,
-        message: 'Ticket not found',
+        message: 'Event not found',
       };
       return res.status(404).json(response);
     }
     const response = {
       statusCode: 200,
-      message: 'Ticket fetched successfully',
-      data: { ticket },
+      message: 'Event fetched successfully',
+      data: { event },
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -93,31 +118,46 @@ export const getTicketById = async (req, res) => {
   }
 };
 
-export const updateTicket = async (req, res) => {
+export const updateEvent = async (req, res) => {
   const { id } = req.params;
-  const { eventType, eventName, eventDate, eventTime, duration } = req.body;
+  const { 
+    eventCategory, 
+    eventName, 
+    eventDate, 
+    eventTime, 
+    duration,      
+    refundPolicy,
+    eventDescription,
+    ticketPrice,
+    eventLocation,
+    eventCapacity, } = req.body;
   try {
-    const ticket = await Ticket.findById(id);
-    if (!ticket) {
+    const event = await Event.findById(id);
+    if (!event) {
       const response = {
         statusCode: 404,
-        message: 'Ticket not found',
+        message: 'Event not found',
       };
       return res.status(404).json(response);
     }
 
-    ticket.eventType = eventType;
-    ticket.eventName = eventName;
-    ticket.eventDate = eventDate;
-    ticket.eventTime = eventTime;
-    ticket.duration = duration;
+    event.eventCategory = eventCategory;
+    event.eventName = eventName;
+    event.eventDate = eventDate;
+    event.eventTime = eventTime;
+    event.duration = duration;
+    event.refundPolicy = refundPolicy;
+    event.eventDescription = eventDescription;
+    event.ticketPrice = ticketPrice;
+    event.eventLocation = eventLocation;
+    event.eventCapacity = eventCapacity;
 
-    await ticket.save();
+    await event.save();
 
     const response = {
       statusCode: 200,
-      message: 'Ticket updated successfully',
-      data: { ticket },
+      message: 'Event updated successfully',
+      data: { event },
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -130,27 +170,27 @@ export const updateTicket = async (req, res) => {
   }
 };
 
-export const deleteTicket = async (req, res) => {
+export const deleteEvent = async (req, res) => {
   const { id } = req.params;
   try {
-    const ticket = await Ticket.findById(id);
-    if (!ticket) {
+    const event = await Event.findById(id);
+    if (!event) {
       const response = {
         statusCode: 404,
-        message: 'Ticket not found',
+        message: 'Event not found',
       };
       return res.status(404).json(response);
     }
 
-    const publicId = ticket.eventCoverPhotos.split('/').pop().split('.')[0];
+    const publicId = event.eventCoverPhotos.split('/').pop().split('.')[0];
     await cloudinaryMediaUpload.destroy(publicId);
 
-    await ticket.remove();
+    await event.remove();
 
     const response = {
       statusCode: 200,
-      message: 'Ticket deleted successfully',
-      data: { ticket },
+      message: 'Event deleted successfully',
+      data: { event },
     };
     return res.status(200).json(response);
   } catch (error) {
