@@ -77,12 +77,12 @@ export const createEvent = async (req, res) => {
 export const getEvents = async (req, res) => {
   try {
     const events = await Event.find();
-    const response = {
-      statusCode: 200,
-      message: "events fetched successfully",
-      data: { events },
-    };
-    return res.status(200).json(response);
+    // const response = {
+    //   statusCode: 200,
+    //   message: "events fetched successfully",
+    //   data: { events },
+    // };
+    return res.status(200).json(events);
   } catch (error) {
     const response = {
       statusCode: 500,
