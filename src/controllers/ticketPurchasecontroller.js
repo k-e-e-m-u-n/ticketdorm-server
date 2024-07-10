@@ -92,6 +92,7 @@ export const sendTicketMail = async (req, res) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
+
     console.log("Email sent: " + info.response, mailOptions);
     res.status(200).json({ success: info.response, newTicket });
   } catch (error) {

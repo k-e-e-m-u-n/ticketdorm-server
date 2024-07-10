@@ -156,10 +156,12 @@ export const verifyOtp = async (req, res) => {
     user.otpExpiry = undefined;
     await user.save();
 
+    const accessToken = generateTokenAndSetCookie(user._id, res);
+
     sendNewMail(user.email, user.firstname);
     res
       .status(200)
-      .json({ message: "OTP verified successfully. You can now log in." });
+      .json({ message: "OTP verified successfully.", accessToken });
   } catch (error) {
     console.error("OTP verification error:", error);
     res.status(500).json({ message: "Server error" });
