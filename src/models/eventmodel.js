@@ -18,13 +18,10 @@ const eventSchema = new mongoose.Schema(
       enum: eventCategoryEnum,
       required: true,
     },
-    event: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Event",
-    },
     eventName: {
       type: String,
       required: true,
+      unique: true,
     },
     eventDate: {
       type: String,

@@ -1,5 +1,5 @@
 import Event from "../models/eventmodel.js";
-// import cloudinaryMediaUpload from "../config/cloudinary.js";
+import cloudinaryMediaUpload from "../config/cloudinary.js";
 
 export const createEvent = async (req, res) => {
   const {
@@ -17,30 +17,38 @@ export const createEvent = async (req, res) => {
 
   // console.log(req.files);
 
-  // const files = req.files;
-  // console.log("Request Body:", req.body);
-  // console.log("Uploaded Files:", files);
+  const files = req.files;
+  console.log("Request Body:", req.body);
+  console.log("Uploaded Files:", files);
 
   try {
-    // if (!files || files.length === 0) {
-    //   const response = {
-    //     statusCode: 400,
-    //     message: "At least one event cover photo is required",
-    //   };
-    //   return res.status(400).json(response);
-    // }
+    if (!files || files.length === 0) {
+      const response = {
+        statusCode: 400,
+        message: "At least one event cover photo is required",
+      };
+      return res.status(400).json(response);
+    }
 
-    // const uploadedImages = await Promise.all(
-    //   files.map(async (file) => {
-    //     const result = await cloudinaryMediaUpload(
-    //       file.path,
-    //       "event_cover_photos"
-    //     );
-    //     return result.url;
-    //   })
-    // );
+    const uploadedImages = await Promise.all(
+      files.map(async (file) => {
+        const result = await cloudinaryMediaUpload(
+          file.path,
+          "event_cover_photos"
+        );
+        return result.url;
+      })
+    );
 
     const policy = "Contact organizer for refund";
+    const event = await Event.findOne({ eventName });
+    if (event) {
+      const response = {
+        statusCode: 409,
+        message: "Event name already exists",
+      };
+      return res.status(409).json(response);
+    }
 
     const newEvent = new Event({
       eventCategory,
@@ -53,7 +61,7 @@ export const createEvent = async (req, res) => {
       ticketPrice,
       eventLocation,
       eventCapacity,
-      eventCoverPhotos,
+      eventCoverPhotos: uploadedImages,
     });
 
     await newEvent.save();
@@ -77,12 +85,12 @@ export const createEvent = async (req, res) => {
 export const getEvents = async (req, res) => {
   try {
     const events = await Event.find();
-    // const response = {
-    //   statusCode: 200,
-    //   message: "events fetched successfully",
-    //   data: { events },
-    // };
-    return res.status(200).json(events);
+    const response = {
+      statusCode: 200,
+      message: "events fetched successfully",
+      data: { events },
+    };
+    return res.status(200).json();
   } catch (error) {
     const response = {
       statusCode: 500,

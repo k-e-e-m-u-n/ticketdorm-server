@@ -11,8 +11,8 @@ import {
 } from "../../controllers/eventController.js";
 const router = express.Router();
 
-// router.post('/create', multer.array('eventCoverPhotos', 5), createEvent);
-router.post("/create", createEvent);
+router.post("/create", multer.array("eventCoverPhotos", 5), createEvent);
+// router.post("/create", createEvent);
 router.get("/all", getEvents);
 router.get("/:id", getEventById);
 router.put("/update/:id", updateEvent);
