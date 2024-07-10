@@ -48,30 +48,30 @@ export const createEvent = async (req, res) => {
         message: "Event name already exists",
       };
       return res.status(409).json(response);
+    } else {
+      const newEvent = new Event({
+        eventCategory,
+        eventName,
+        eventDate,
+        eventTime,
+        duration,
+        refundPolicy: policy,
+        eventDescription,
+        ticketPrice,
+        eventLocation,
+        eventCapacity,
+        eventCoverPhotos: uploadedImages,
+      });
+
+      await newEvent.save();
+
+      const response = {
+        statusCode: 201,
+        message: "Event created successfully",
+        data: { newEvent },
+      };
+      return res.status(201).json(response);
     }
-
-    const newEvent = new Event({
-      eventCategory,
-      eventName,
-      eventDate,
-      eventTime,
-      duration,
-      refundPolicy: policy,
-      eventDescription,
-      ticketPrice,
-      eventLocation,
-      eventCapacity,
-      eventCoverPhotos: uploadedImages,
-    });
-
-    await newEvent.save();
-
-    const response = {
-      statusCode: 201,
-      message: "Event created successfully",
-      data: { newEvent },
-    };
-    return res.status(201).json(response);
   } catch (error) {
     const response = {
       statusCode: 500,
