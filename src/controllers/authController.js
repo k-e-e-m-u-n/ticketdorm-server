@@ -28,6 +28,16 @@ function generateOTP() {
   }
   return otp;
 }
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 const sendNewMail = async (email, firstname, res) => {
   const transporter = nodemailer.createTransport({
@@ -165,6 +175,83 @@ export const verifyOtp = async (req, res) => {
   } catch (error) {
     console.error("OTP verification error:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const resetPasswordMail = async (req, res) => {
+  const resetURL =
+    "http://ticketdorm.netlify.app/ticketdorm/auth/resetPassword";
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      const response = {
+        statusCode: 404,
+        message: "User not found",
+      };
+      res.status(404).json(response);
+    }
+    const mailOptions = {
+      from: {
+        name: "Ticketdorm",
+        address: process.env.EMAIL_USER,
+      },
+      to: user.email,
+      subject: "Account password reset",
+      text: `Password Reset`,
+      html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+        Please click on the following link, or paste this into your browser to complete the process:\n\n
+        ${resetURL}\n\n
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response, mailOptions);
+    return res
+      .status(200)
+      .json({ message: "Password reset link sent to your email" });
+  } catch (error) {
+    const response = {
+      statusCode: 500,
+      message: "Internal server error",
+      error: { message: error.message },
+    };
+    return res.status(500).json(response);
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { id } = req.params;
+  const { password } = req.body;
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      const response = {
+        statusCode: 404,
+        message: "User not found",
+      };
+      res.status(404).json(response);
+    }
+    const hashedPassword = hashValue(password);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    const response = {
+      statusCode: 200,
+      message: "password reset successfully",
+      data: { user: user },
+    };
+    return res.status(200).json(response);
+  } catch (error) {
+    const response = {
+      statusCode: 500,
+      message: "Internal server error",
+      error: { message: error.message },
+    };
+    return res.status(500).json(response);
   }
 };
 
