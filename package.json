@@ -12,6 +12,7 @@
   "author": "Nenkemun Sophia Jonathan...",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "bwip-js": "^4.4.0",
     "cloudinary": "^2.2.0",

@@ -8,6 +8,7 @@ import { formatZodError } from "../utils/errorMessage.js";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { identcode } from "bwip-js/node";
 
 dotenv.config();
 
@@ -171,7 +172,7 @@ export const verifyOtp = async (req, res) => {
     sendNewMail(user.email, user.firstname);
     res
       .status(200)
-      .json({ message: "OTP verified successfully.", accessToken });
+      .json({ message: "OTP verified successfully.", accessToken,user });
   } catch (error) {
     console.error("OTP verification error:", error);
     res.status(500).json({ message: "Server error" });
@@ -179,8 +180,11 @@ export const verifyOtp = async (req, res) => {
 };
 
 export const resetPasswordMail = async (req, res) => {
-  const resetURL =
-    "http://ticketdorm.netlify.app/ticketdorm/auth/resetPassword";
+  const { Id }= req.params;
+  const userId = await User.findById(Id);
+
+  const resetURL = `https://ticketdorm.netlify.app/resetPassword/${userId}`;
+
   const { email } = req.body;
 
   try {
@@ -280,4 +284,13 @@ export const signIn = async (req, res, next) => {
   }
 };
 
-export const logout = async (req, res, next) => {};
+export const logout = async (req, res, next) => {
+  try {
+    res.clearCookie("jwt");
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+    console.error("INTERNAL SERVER ERROR", error.message);
+  }
+};

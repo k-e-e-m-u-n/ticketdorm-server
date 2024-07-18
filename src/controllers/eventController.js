@@ -1,4 +1,5 @@
 import Event from "../models/eventmodel.js";
+import User from "../models/usermodel.js";
 import cloudinaryMediaUpload from "../config/cloudinary.js";
 
 export const createEvent = async (req, res) => {
@@ -12,16 +13,17 @@ export const createEvent = async (req, res) => {
     ticketPrice,
     eventLocation,
     eventCapacity,
+    phoneNumber,
     eventCoverPhotos,
   } = req.body;
 
-  // console.log(req.files);
-
   const files = req.files;
-  console.log("Request Body:", req.body);
-  console.log("Uploaded Files:", files);
 
   try {
+    const postedBy = req.user;
+
+    const {firstname,lastname} = await User.findById(postedBy, { firstName: 1,lastname: 1 });
+
     if (!files || files.length === 0) {
       const response = {
         statusCode: 400,
@@ -50,6 +52,9 @@ export const createEvent = async (req, res) => {
       return res.status(409).json(response);
     }
     const newEvent = new Event({
+      firstname,
+      lastname,
+      postedBy,
       eventCategory,
       eventName,
       eventDate,
@@ -60,11 +65,12 @@ export const createEvent = async (req, res) => {
       ticketPrice,
       eventLocation,
       eventCapacity,
+      phoneNumber,
       eventCoverPhotos: uploadedImages,
     });
 
     await newEvent.save();
-
+    console.log(newEvent);
     const response = {
       statusCode: 201,
       message: "Event created successfully",

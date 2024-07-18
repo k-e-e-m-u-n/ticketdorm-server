@@ -30,7 +30,11 @@ const ticketSchema = mongoose.Schema({
     type: Buffer,
   },
   date: {
-    type: String,
+    type:Date,
+  },
+  isPaid: {
+    type: Boolean,
+    default: false
   },
 });
 

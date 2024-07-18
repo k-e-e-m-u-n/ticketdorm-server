@@ -13,6 +13,11 @@ const eventCategoryEnum = [
 
 const eventSchema = new mongoose.Schema(
   {
+    postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     eventCategory: {
       type: String,
       enum: eventCategoryEnum,
@@ -24,7 +29,7 @@ const eventSchema = new mongoose.Schema(
       unique: true,
     },
     eventDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     eventTime: {
@@ -38,7 +43,7 @@ const eventSchema = new mongoose.Schema(
     eventCoverPhotos: [
       {
         type: String,
-        // required: true,
+        required: true,
       },
     ],
     refundPolicy: {
@@ -59,6 +64,10 @@ const eventSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    phoneNumber: {
+      type: String,
+      required: true,
+    }
   },
   { timestamps: true }
 );

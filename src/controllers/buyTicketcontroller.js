@@ -1,20 +1,21 @@
 import nodemailer from "nodemailer";
 import Ticket from "../models/ticketsmodel.js";
-// import Payment from "../models/payment.js";
-import eventTicket from "../models/eventmodel.js";
-// import { initializePayment, verifyPayment } from '../service/paystackservice.js';
+import Event from "../models/eventmodel.js";
+import {initializePayment, verifyPayment } from '../service/paystackservice.js';
 import generateQRCode from "../utils/qrcodegenerator.js";
 import createTicketHTML from "../utils/createticketHtml.js";
 import generateTicketPDF from "../utils/generateTicketPdf.js";
 import generateUniqueCode from "../utils/generatecode.js";
+import axios from "axios";
+import paystack from 'paystack'
 import dotenv from "dotenv";
 
 dotenv.config();
 
-export const sendTicketMail = async (req, res) => {
+export const buyTicket = async (req, res) => {
   const eventId = req.params.id;
   const { eventName, eventLocation, eventTime, eventDate } =
-    await eventTicket.findById(eventId, {
+    await Event.findById(eventId, {
       eventLocation: 1,
       eventTime: 1,
       eventName: 1,
@@ -25,7 +26,7 @@ export const sendTicketMail = async (req, res) => {
     return res.status(404).json({ message: "Event ticket not found" });
   }
 
-  const { event, buyer, email, phoneNumber, date, time, location } = req.body;
+  const { event, buyer, email, phoneNumber,amount} = req.body;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -39,7 +40,10 @@ export const sendTicketMail = async (req, res) => {
   });
 
   let qrCodeBuffer;
-  try {
+  try{
+
+    const paymentResponse = await initializePayment(email, amount);
+
     const type = "General Admission";
     const uniqueCode = generateUniqueCode();
     qrCodeBuffer = await generateQRCode(`${buyer}`, `${event}`);
@@ -91,13 +95,31 @@ export const sendTicketMail = async (req, res) => {
       ],
     };
 
-    const info = await transporter.sendMail(mailOptions);
+  const info = await transporter.sendMail(mailOptions);
 
-    console.log("Email sent: " + info.response, mailOptions);
-    res.status(200).json({ success: info.response, newTicket });
+  console.log("Email sent: " + info.response, mailOptions);
+  res
+    .status(200)
+    .json({
+      success: info.response,
+      newTicket,
+      authorization_url: paymentResponse.data.authorization_url,
+    });
+    
   } catch (error) {
     console.error("Error sending email:", error);
     console.error("Error generating QR code:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const handleCallback = async (req, res) => {
+  const reference = req.query.reference; 
+  try {
+    const response = await verifyPayment(reference);
+
+    res.status(200).json(response);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
