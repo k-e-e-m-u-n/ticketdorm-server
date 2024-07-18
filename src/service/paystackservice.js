@@ -1,4 +1,5 @@
 import axios from "axios";
+import Event from "../models/eventmodel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -36,12 +37,13 @@ const paystack = axios.create({
 
 // Function to initialize a payment
 export const initializePayment = async (
-  email,
-  amount
+  email,amount
 ) => {
+
+  
   const payload = {
     email,
-    amount: amount * 100,
+    amount:amount * 100,
     callback_url: "http://ticketdorm.netlify.app/payment/callback", // Change this URL based on your environment
   };
 

@@ -276,7 +276,7 @@ export const signIn = async (req, res, next) => {
     }
     const accessToken = generateTokenAndSetCookie(user._id, res);
 
-    res.status(200).json({ message: "User Login successful", accessToken });
+    res.status(200).json({ message: "User Login successful", accessToken,user });
     console.log("User Login successful", accessToken);
   } catch (error) {
     res.status(500).json({ message: error.message });

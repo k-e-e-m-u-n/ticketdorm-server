@@ -14,15 +14,16 @@ dotenv.config();
 
 export const buyTicket = async (req, res) => {
   const eventId = req.params.id;
-  const { eventName, eventLocation, eventTime, eventDate } =
+  const { eventName, eventLocation, eventTime, eventDate,ticketPrice } =
     await Event.findById(eventId, {
       eventLocation: 1,
       eventTime: 1,
       eventName: 1,
       eventDate: 1,
+      ticketPrice: 1
     });
 
-  if (!eventName || !eventLocation || !eventTime || !eventDate) {
+  if (!eventName || !eventLocation || !eventTime || !eventDate || !ticketPrice) {
     return res.status(404).json({ message: "Event ticket not found" });
   }
 
@@ -38,11 +39,10 @@ export const buyTicket = async (req, res) => {
       pass: process.env.EMAIL_PASS,
     },
   });
-
   let qrCodeBuffer;
   try{
 
-    const paymentResponse = await initializePayment(email, amount);
+    const paymentResponse = await initializePayment(email,amount);
 
     const type = "General Admission";
     const uniqueCode = generateUniqueCode();
@@ -69,7 +69,7 @@ export const buyTicket = async (req, res) => {
       time: eventTime,
       location: eventLocation,
       ticketType: type,
-      orderNumber: uniqueCode,
+      orderNumber: uniqueCode
     });
 
     await newTicket.save();

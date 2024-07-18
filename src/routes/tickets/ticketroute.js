@@ -10,6 +10,6 @@ const router = express.Router();
 
 // router.post("/Subaccount",createSubaccount)
 router.post("/buyticket/:id", buyTicket);
-router.get("/verify", handleCallback);
+router.get("/verify/callback", handleCallback);
 
 export default router;

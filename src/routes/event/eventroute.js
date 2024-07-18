@@ -15,8 +15,8 @@ router.post("/create", multer.array("eventCoverPhotos", 5),protectRoute,createEv
 // router.post("/create", createEvent);
 router.get("/all", getEvents);
 router.get("/:id", getEventById);
-router.put("/update/:id", updateEvent,protectRoute);
-router.delete("/delete/:id", deleteEvent, protectRoute);
-router.delete("/deleteAll", deleteAllEvent, protectRoute);
+router.put("/update/:id",protectRoute, updateEvent);
+router.delete("/delete/:id", protectRoute, deleteEvent);
+router.delete("/deleteAll", protectRoute, deleteAllEvent);
 
 export default router;
