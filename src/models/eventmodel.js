@@ -67,7 +67,10 @@ const eventSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       required: true,
-    }
+    },
+    firstname: {
+      type: String
+    },
   },
   { timestamps: true }
 );

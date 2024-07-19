@@ -14,6 +14,7 @@ export const createEvent = async (req, res) => {
     eventLocation,
     eventCapacity,
     phoneNumber,
+    firstname,
     eventCoverPhotos,
   } = req.body;
 
@@ -22,7 +23,7 @@ export const createEvent = async (req, res) => {
   try {
     const postedBy = req.user;
 
-    const {firstname,lastname} = await User.findById(postedBy, { firstName: 1,lastname: 1 });
+    const {firstname,lastname} = await User.findById(postedBy, { firstname: 1,lastname: 1 });
 
     if (!files || files.length === 0) {
       const response = {
@@ -52,8 +53,7 @@ export const createEvent = async (req, res) => {
       return res.status(409).json(response);
     }
     const newEvent = new Event({
-      firstname,
-      lastname,
+      firstname:firstname,
       postedBy,
       eventCategory,
       eventName,
