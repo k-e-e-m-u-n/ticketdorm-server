@@ -181,14 +181,16 @@ export const verifyOtp = async (req, res) => {
 
 export const resetPasswordMail = async (req, res) => {
   const { Id }= req.params;
-  const userId = await User.findById(Id);
+  const userId = await User.findById(Id,{_id:1});
 
-  const resetURL = `https://ticketdorm.netlify.app/resetPassword/${userId}`;
+ 
 
   const { email } = req.body;
 
   try {
     const user = await User.findOne({ email });
+
+     const resetURL = `https://ticketdorm.netlify.app/reset-password/${user._id}`;
     if (!user) {
       const response = {
         statusCode: 404,
