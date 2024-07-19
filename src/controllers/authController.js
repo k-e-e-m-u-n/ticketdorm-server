@@ -24,7 +24,7 @@ function comparePasswords(inputPassword, hashedPassword) {
 
 function generateOTP() {
   let otp = "";
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 4; i++) {
     otp += Math.floor(Math.random() * 10).toString();
   }
   return otp;
