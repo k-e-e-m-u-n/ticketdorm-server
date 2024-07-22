@@ -52,6 +52,9 @@ const eventSchema = new mongoose.Schema(
     eventDescription: {
       type: String,
     },
+    // aboutEvent: {
+    //   type: String,
+    // },
     ticketPrice: {
       type: Number,
       required: true,
@@ -69,7 +72,7 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
     firstname: {
-      type: String
+      type: String,
     },
   },
   { timestamps: true }

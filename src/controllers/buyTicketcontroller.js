@@ -27,7 +27,7 @@ export const buyTicket = async (req, res) => {
     return res.status(404).json({ message: "Event ticket not found" });
   }
 
-  const { event, buyer, email, phoneNumber,amount} = req.body;
+  const { event, buyer, email, phoneNumber} = req.body;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -42,7 +42,7 @@ export const buyTicket = async (req, res) => {
   let qrCodeBuffer;
   try{
 
-    const paymentResponse = await initializePayment(email,amount);
+    const paymentResponse = await initializePayment(email,ticketPrice);
 
     const type = "General Admission";
     const uniqueCode = generateUniqueCode();
@@ -117,6 +117,8 @@ export const handleCallback = async (req, res) => {
   const reference = req.query.reference; 
   try {
     const response = await verifyPayment(reference);
+
+    await response.save()
 
     res.status(200).json(response);
   } catch (error) {
