@@ -118,7 +118,7 @@ export const handleCallback = async (req, res) => {
   try {
     const response = await verifyPayment(reference);
 
-    await response.save()
+    // await response.save()
 
     res.status(200).json(response);
   } catch (error) {
