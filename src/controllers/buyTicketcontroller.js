@@ -76,11 +76,11 @@ export const buyTicket = async (req, res) => {
 
     console.log(newTicket);
 
-    const ticketHTML = createTicketHTML(event, buyer, uniqueCode);
+    const ticketHTML = createTicketHTML(eventName, buyer, uniqueCode);
 
     const mailOptions = {
       from: {
-        name: "Ticketbooth",
+        name: "Ticketdorm",
         address: process.env.EMAIL_USER,
       },
       to: email,
@@ -125,3 +125,4 @@ export const handleCallback = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
