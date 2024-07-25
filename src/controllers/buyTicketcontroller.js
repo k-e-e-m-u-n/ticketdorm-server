@@ -24,9 +24,9 @@ export const buyTicket = async (req, res) => {
     ticketPrice,
     postedBy,
   } = await Event.findById(eventId, {
-    eventLocation: 1,
     eventTime: 1,
     eventName: 1,
+    eventLocation: 1,
     eventDate: 1,
     ticketPrice: 1,
     postedBy: 1,
@@ -97,6 +97,7 @@ export const buyTicket = async (req, res) => {
 
 export const handleCallback = async (req, res) => {
   const reference = req.query.reference;
+
   let qrCodeBuffer;
   try {
     const response = await verifyPayment(reference);
@@ -106,13 +107,26 @@ export const handleCallback = async (req, res) => {
       const { status } = response.data;
       const { customer } = response.data;
 
-      const ticket = await Ticket.findOne({ email: customer.email });
+      const { ticketId, eventId } = req.params;
+      const ticket = await Ticket.findOne({
+        email: customer.email,
+        _id: ticketId,
+      });
 
+      const event = await Event.findById(eventId, {
+        eventLocation: 1
+      });
+
+        if (!event) {
+          console.error("Event not found with id:", eventId);
+          return res.status(404).json({ message: "Event not found" });
+        }
       if (status !== "success") {
         return res.status(400).json({ message: "Payment not successful" });
-      } else {
-        ticket.isPaid = true;
       }
+      //  else {
+      //   ticket.isPaid = true;
+      // }
       if (!ticket) {
         return res.status(404).json({ message: "Ticket not found" });
       }
@@ -127,45 +141,25 @@ export const handleCallback = async (req, res) => {
           pass: process.env.EMAIL_PASS,
         },
       });
+
       qrCodeBuffer = await generateQRCode(`${ticket.buyer}`, `${ticket.event}`);
-      // const eventDetails = {
-      //   event: eventName,
-      //   date: eventDate,
-      //   location: eventLocation,
-      //   buyer,
-      //   time: eventTime,
-      //   ticketType: type,
-      //   orderNumber: uniqueCode,
-      // };
 
       const eventDetails = {
         event: ticket.event,
         date: ticket.date,
         location: ticket.location,
+        location: event.eventLocation,
         buyer: ticket.buyer,
         time: ticket.time,
         ticketType: ticket.ticketType,
         orderNumber: ticket.orderNumber,
       };
-      // const eventDetails = {
-      //   event: ticket.eventDetails.event,
-      //   date: ticket.eventDetails.date,
-      //   location: ticket.eventDetails.location,
-      //   buyer: ticket.eventDetails.buyer,
-      //   time: ticket.eventDetails.time,
-      //   ticketType: ticket.eventDetails.ticketType,
-      //   orderNumber: ticket.eventDetails.orderNumber,
-      // };
-      // qrCodeBuffer = await generateQRCode(`${eventDetails.buyer}`, `${eventDetails.event}`);
-      // console.log(eventDetails);
-
-      const pdfBytes = await generateTicketPDF(eventDetails, qrCodeBuffer);
-
       const ticketHTML = createTicketHTML(
         ticket.event,
-        ticket.buyer,
-        ticket.orderNumber
+        eventDetails.buyer,
+        eventDetails.orderNumber
       );
+      const pdfBytes = await generateTicketPDF(eventDetails, qrCodeBuffer);
 
       const mailOptions = {
         from: {
