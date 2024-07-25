@@ -10,6 +10,7 @@ import createTicketHTML from "../utils/createticketHtml.js";
 import generateTicketPDF from "../utils/generateTicketPdf.js";
 import generateUniqueCode from "../utils/generatecode.js";
 import dotenv from "dotenv";
+import { create } from "qrcode";
 
 dotenv.config();
 
@@ -42,11 +43,12 @@ export const buyTicket = async (req, res) => {
     return res.status(404).json({ message: "Event ticket not found" });
   }
 
-  const { buyer, email, phoneNumber } = req.body;
+  const { event, buyer, email, phoneNumber } = req.body;
 
   try {
     const paymentResponse = await initializePayment(email, ticketPrice);
 
+    let qrCodeBuffer;
     const type = "General Admission";
     const uniqueCode = generateUniqueCode();
 
@@ -59,7 +61,7 @@ export const buyTicket = async (req, res) => {
       ticketType: type,
       orderNumber: uniqueCode,
     };
-    qrCodeBuffer = await generateQRCode(`${buyer}`, `${event}`);
+    //  qrCodeBuffer = await generateQRCode(`${buyer}`, `${event}`);
 
     console.log(eventDetails);
 
@@ -75,6 +77,7 @@ export const buyTicket = async (req, res) => {
       ticketType: type,
       orderNumber: uniqueCode,
       eventDetails: eventDetails,
+      // qrCodeBuffer: qrCodeBuffer,
     });
 
     await newTicket.save();
@@ -124,24 +127,39 @@ export const handleCallback = async (req, res) => {
           pass: process.env.EMAIL_PASS,
         },
       });
-      // qrCodeBuffer = await generateQRCode(`${ticket.buyer}`, `${ticket.event}`);
-
+      qrCodeBuffer = await generateQRCode(`${ticket.buyer}`, `${ticket.event}`);
       // const eventDetails = {
-      //   event: ticket.event,
-      //   date: ticket.date,
-      //   location: ticket.location,
-      //   buyer: ticket.buyer,
-      //   time: ticket.time,
-      //   ticketType: ticket.ticketType,
-      //   orderNumber: ticket.orderNumber,
+      //   event: eventName,
+      //   date: eventDate,
+      //   location: eventLocation,
+      //   buyer,
+      //   time: eventTime,
+      //   ticketType: type,
+      //   orderNumber: uniqueCode,
       // };
 
+      const eventDetails = {
+        event: ticket.event,
+        date: ticket.date,
+        location: ticket.location,
+        buyer: ticket.buyer,
+        time: ticket.time,
+        ticketType: ticket.ticketType,
+        orderNumber: ticket.orderNumber,
+      };
+      // const eventDetails = {
+      //   event: ticket.eventDetails.event,
+      //   date: ticket.eventDetails.date,
+      //   location: ticket.eventDetails.location,
+      //   buyer: ticket.eventDetails.buyer,
+      //   time: ticket.eventDetails.time,
+      //   ticketType: ticket.eventDetails.ticketType,
+      //   orderNumber: ticket.eventDetails.orderNumber,
+      // };
+      // qrCodeBuffer = await generateQRCode(`${eventDetails.buyer}`, `${eventDetails.event}`);
       // console.log(eventDetails);
 
-      const pdfBytes = await generateTicketPDF(
-        ticket.eventDetails,
-        ticket.qrCodeBuffer
-      );
+      const pdfBytes = await generateTicketPDF(eventDetails, qrCodeBuffer);
 
       const ticketHTML = createTicketHTML(
         ticket.event,

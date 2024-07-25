@@ -21,9 +21,9 @@ const ticketSchema = mongoose.Schema({
   time: {
     type: String,
   },
-  location: {
-    type: String,
-  },
+  // location: {
+  //   type: String,
+  // },
   orderNumber: {
     type: String,
     unique: true,
@@ -37,6 +37,9 @@ const ticketSchema = mongoose.Schema({
   },
   eventDetails: {
     type: Object,
+  },
+  qrCodeBuffer: {
+    type: Buffer,
   },
   postedBy: {
     type: String,
