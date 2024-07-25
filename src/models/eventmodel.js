@@ -9,6 +9,7 @@ const eventCategoryEnum = [
   "Nightlife",
   "Sports & Fitness",
   "Religion",
+  "Others"
 ];
 
 const eventSchema = new mongoose.Schema(
