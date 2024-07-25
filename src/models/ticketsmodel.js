@@ -21,6 +21,9 @@ const ticketSchema = mongoose.Schema({
   time: {
     type: String,
   },
+  location: {
+    type: String,
+  },
   orderNumber: {
     type: String,
     unique: true,
@@ -30,11 +33,20 @@ const ticketSchema = mongoose.Schema({
     type: Buffer,
   },
   date: {
-    type:Date,
+    type: String,
+  },
+  eventDetails: {
+    type: Object,
+  },
+  postedBy: {
+    type: String,
+  },
+  pdfbytes: {
+    type: Buffer,
   },
   isPaid: {
     type: Boolean,
-    default: false
+    default: false,
   },
 });
 

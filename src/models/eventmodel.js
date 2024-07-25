@@ -29,7 +29,7 @@ const eventSchema = new mongoose.Schema(
       unique: true,
     },
     eventDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     eventTime: {
@@ -52,9 +52,7 @@ const eventSchema = new mongoose.Schema(
     eventDescription: {
       type: String,
     },
-    // aboutEvent: {
-    //   type: String,
-    // },
+
     ticketPrice: {
       type: Number,
       required: true,
@@ -73,6 +71,10 @@ const eventSchema = new mongoose.Schema(
     },
     firstname: {
       type: String,
+    },
+    aboutEvent: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

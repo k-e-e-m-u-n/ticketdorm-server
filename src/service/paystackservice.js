@@ -44,7 +44,7 @@ export const initializePayment = async (
   const payload = {
     email,
     amount:amount * 100,
-    callback_url: "http://ticketdorm.netlify.app/verify-payment/callback", // Change this URL based on your environment
+    callback_url: "http://ticketdorm.netlify.app/verify-payment/callback?", // Change this URL based on your environment
   };
 
   try {

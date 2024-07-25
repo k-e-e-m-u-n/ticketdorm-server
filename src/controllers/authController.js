@@ -84,7 +84,7 @@ export const signUp = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ $or: [{ email }] });
     if (user) {
-      res.status(409).json({ messaage: "User already exists", user });
+      res.status(409).json({ messaage: "User already exists", user});
     } else {
       const { firstname, lastname, password, confirmPassword, email } =
         req.body;
@@ -109,9 +109,10 @@ export const signUp = async (req, res) => {
         otpExpiry,
       });
 
+     
       await newUser.save();
-
-      res.status(200).json({ message: "User saved successfully", newUser });
+    
+         res.status(200).json({ message: "User saved successfully", newUser });
       console.log("User saved succesfully", newUser);
 
       const transporter = nodemailer.createTransport({

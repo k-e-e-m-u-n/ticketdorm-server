@@ -14,6 +14,7 @@ export const createEvent = async (req, res) => {
     eventLocation,
     eventCapacity,
     phoneNumber,
+    aboutEvent,
     firstname,
     eventCoverPhotos,
   } = req.body;
@@ -53,7 +54,7 @@ export const createEvent = async (req, res) => {
       return res.status(409).json(response);
     }
     const newEvent = new Event({
-      firstname:firstname,
+      firstname: firstname,
       postedBy,
       eventCategory,
       eventName,
@@ -66,6 +67,7 @@ export const createEvent = async (req, res) => {
       eventLocation,
       eventCapacity,
       phoneNumber,
+      aboutEvent,
       eventCoverPhotos: uploadedImages,
     });
 

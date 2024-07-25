@@ -12,7 +12,6 @@ import {
 const router = express.Router();
 
 router.post("/create", multer.array("eventCoverPhotos", 5),protectRoute,createEvent);
-// router.post("/create", createEvent);
 router.get("/all", getEvents);
 router.get("/:id", getEventById);
 router.put("/update/:id",protectRoute, updateEvent);

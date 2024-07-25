@@ -1,4 +1,5 @@
 import User from "../models/usermodel.js";
+import Ticket from "../models/ticketsmodel.js";
 import cloudinaryMediaUpload from "../config/cloudinary.js";
 
 export const updateUser = async (req, res) => {
@@ -67,3 +68,20 @@ export const updateUser = async (req, res) => {
     return res.status(500).json(response);
   }
 };
+
+export const getTicketsSold  = async (req,res) => {
+
+  const userId = req.params.id;
+  try {
+    const ticketsSoldCount = await Ticket.countDocuments({ postedBy: userId });
+    const tickets = await Ticket.find({ postedBy: userId });
+
+    res.status(200).json({ ticketsSold: ticketsSoldCount, tickets });
+  } catch (error) {
+    console.error("Error fetching tickets sold:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+
+}
