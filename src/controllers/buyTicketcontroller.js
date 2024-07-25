@@ -61,8 +61,6 @@ export const buyTicket = async (req, res) => {
       ticketType: type,
       orderNumber: uniqueCode,
     };
-    //  qrCodeBuffer = await generateQRCode(`${buyer}`, `${event}`);
-
     console.log(eventDetails);
 
     const newTicket = new Ticket({
@@ -77,7 +75,7 @@ export const buyTicket = async (req, res) => {
       ticketType: type,
       orderNumber: uniqueCode,
       eventDetails: eventDetails,
-      // qrCodeBuffer: qrCodeBuffer,
+      eventId:eventId
     });
 
     await newTicket.save();
@@ -187,12 +185,11 @@ export const handleCallback = async (req, res) => {
         response,
       });
     } else {
-      // Log the unexpected response structure
+      
       console.error("Unexpected response structure:", response);
       res.status(500).json({ error: "Unexpected response structure" });
     }
 
-    // res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

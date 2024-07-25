@@ -51,6 +51,9 @@ const ticketSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  eventId: {
+    type: String,
+  },
 });
 
 const Ticket = mongoose.model("Ticket", ticketSchema);
