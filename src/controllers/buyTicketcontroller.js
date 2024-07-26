@@ -89,7 +89,7 @@ export const buyTicket = async (req, res) => {
     //   },
     // });
 
-    // qrCodeBuffer = await generateQRCode(`${buyer}`, `${event}`);
+    // qrCodeBuffer = await generateQRCode(`${buyer}`, `${eventName}`);
 
     // const ticketHTML = createTicketHTML(
     //   eventName,buyer,orderNumber
