@@ -75,8 +75,52 @@ export const buyTicket = async (req, res) => {
       ticketType: type,
       orderNumber: uniqueCode,
       eventDetails: eventDetails,
-      eventId:eventId
+      eventId: eventId,
     });
+
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   host: "smtp.gmail.com",
+    //   port: 587,
+    //   secure: false,
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
+
+    // qrCodeBuffer = await generateQRCode(`${buyer}`, `${event}`);
+
+    // const ticketHTML = createTicketHTML(
+    //   eventName,buyer,orderNumber
+    // );
+    // const pdfBytes = await generateTicketPDF(eventDetails, qrCodeBuffer);
+
+    // const mailOptions = {
+    //   from: {
+    //     name: "Ticketdorm",
+    //     address: process.env.EMAIL_USER,
+    //   },
+    //   to: email,
+    //   subject: "e-Ticket",
+    //   html: ticketHTML,
+    //   attachments: [
+    //     {
+    //       filename: "ticket.pdf",
+    //       content: pdfBytes,
+    //       contentType: "application/pdf",
+    //     },
+    //   ],
+    // };
+
+    // const info = await transporter.sendMail(mailOptions);
+
+    // console.log("Email sent: " + info.response, mailOptions);
+    // res.status(200).json({
+    //   success: info.response,
+    //   ticket,
+    //   response,
+    // });
 
     await newTicket.save();
 
@@ -112,13 +156,13 @@ export const handleCallback = async (req, res) => {
       });
 
       const event = await Event.findById(eventId, {
-        eventLocation: 1
+        eventLocation: 1,
       });
 
-        if (!event) {
-          console.error("Event not found with id:", eventId);
-          return res.status(404).json({ message: "Event not found" });
-        }
+      if (!event) {
+        console.error("Event not found with id:", eventId);
+        return res.status(404).json({ message: "Event not found" });
+      }
       if (status !== "success") {
         return res.status(400).json({ message: "Payment not successful" });
       }
@@ -185,11 +229,9 @@ export const handleCallback = async (req, res) => {
         response,
       });
     } else {
-      
       console.error("Unexpected response structure:", response);
       res.status(500).json({ error: "Unexpected response structure" });
     }
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

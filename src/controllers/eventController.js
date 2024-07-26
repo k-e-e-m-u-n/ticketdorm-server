@@ -13,7 +13,6 @@ export const createEvent = async (req, res) => {
     ticketPrice,
     eventLocation,
     eventCapacity,
-    phoneNumber,
     aboutEvent,
     firstname,
     eventCoverPhotos,
@@ -66,7 +65,6 @@ export const createEvent = async (req, res) => {
       ticketPrice,
       eventLocation,
       eventCapacity,
-      phoneNumber,
       aboutEvent,
       eventCoverPhotos: uploadedImages,
     });
