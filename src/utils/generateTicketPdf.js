@@ -12,6 +12,8 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
   const normalFont = await pdfDoc.embedFont(StandardFonts.Courier);
   const fontSize = 10;
   const titleSize = 15;
+
+
   page.drawRectangle({
     x: 0,
     y: 0,
@@ -34,7 +36,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
   page.drawText(`Ticketdorm Group Inc`, {
     x: 50,
     y: height - 50,
-    size: 14,
+    size: 11.5,
     font: normalFont,
     color: rgb(0, 0, 0),
     opacity: 0.91,
@@ -42,7 +44,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
   page.drawText(`${eventDetails.event}`, {
     x: 50,
     y: height - 75,
-    size: fontSize,
+    size: 15,
     font: boldFont,
     color: rgb(0, 0, 0),
   });
@@ -72,7 +74,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
     color: rgb(0, 0, 0),
   });
   page.drawText(` ${eventDetails.buyer}`, {
-    x: 50,
+    x: 45,
     y: 100,
     size: fontSize,
     font: normalFont,
@@ -80,7 +82,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
     opacity: 0.91,
   });
   page.drawText(`TICKET`, {
-    x: 200,
+    x: 180,
     y: 120,
     size: titleSize,
     font: boldFont,

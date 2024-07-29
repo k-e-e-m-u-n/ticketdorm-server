@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Create an axios instance to interact with Paystack's API
+
 const paystack = axios.create({
   baseURL: "https://api.paystack.co",
   headers: {
@@ -35,7 +35,7 @@ const paystack = axios.create({
 //   }
 // };
 
-// Function to initialize a payment
+
 export const initializePayment = async (
   email,amount
 ) => {
@@ -44,7 +44,7 @@ export const initializePayment = async (
   const payload = {
     email,
     amount:amount * 100,
-    callback_url: "http://ticketdorm.netlify.app/verify-payment/callback?", // Change this URL based on your environment
+    callback_url: "http://ticketdorm.netlify.app/verify-payment/callback?", 
   };
 
   try {
@@ -56,7 +56,7 @@ export const initializePayment = async (
   }
 };
 
-// Function to verify a payment
+
 export const verifyPayment = async (reference) => {
   try {
     const response = await paystack.get(`/transaction/verify/${reference}`);

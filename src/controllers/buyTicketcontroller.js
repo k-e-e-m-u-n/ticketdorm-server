@@ -236,3 +236,104 @@ export const handleCallback = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const freeTicket = async (req, res) => {
+  const eventId = req.params.id;
+  const { eventName, eventLocation, eventTime, eventDate, postedBy } =
+    await Event.findById(eventId, {
+      eventTime: 1,
+      eventName: 1,
+      eventLocation: 1,
+      eventDate: 1,
+      postedBy: 1,
+    });
+
+  if (!eventName || !eventLocation || !eventTime || !eventDate || !postedBy) {
+    return res.status(404).json({ message: "Event ticket not found" });
+  }
+
+  const { buyer, email, phoneNumber } = req.body;
+  try {
+    let qrCodeBuffer;
+    const type = "Free Admisssion";
+    const uniqueCode = generateUniqueCode();
+    qrCodeBuffer = await generateQRCode(`${buyer}`, `${eventName}`);
+
+    const eventDetails = {
+      event: eventName,
+      date: eventDate,
+      location: eventLocation,
+      buyer,
+      time: eventTime,
+      ticketType: type,
+      orderNumber: uniqueCode,
+    };
+    console.log(eventDetails);
+
+    const newTicket = new Ticket({
+      postedBy,
+      event: eventName,
+      buyer,
+      email,
+      phoneNumber,
+      date: eventDate,
+      time: eventTime,
+      location: eventLocation,
+      ticketType: type,
+      orderNumber: uniqueCode,
+      eventDetails: eventDetails,
+      eventId: eventId,
+    });
+
+    await newTicket.save();
+
+    console.log(newTicket);
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const ticketHTML = createTicketHTML(
+      eventName,
+      buyer,
+      eventDetails.orderNumber
+    );
+
+    const pdfBytes = await generateTicketPDF(eventDetails, qrCodeBuffer);
+    const mailOptions = {
+      from: {
+        name: "Ticketdorm",
+        address: process.env.EMAIL_USER,
+      },
+      to: email,
+      subject: "e-Ticket",
+      html: ticketHTML,
+      attachments: [
+        {
+          filename: "ticket.pdf",
+          content: pdfBytes,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("Email sent: " + info.response, mailOptions);
+    res.status(200).json({
+      success: info.response,
+      newTicket,
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    console.error("Error generating QR code:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
