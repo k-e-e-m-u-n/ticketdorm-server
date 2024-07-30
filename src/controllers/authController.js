@@ -8,7 +8,6 @@ import { formatZodError } from "../utils/errorMessage.js";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { identcode } from "bwip-js/node";
 
 dotenv.config();
 
@@ -95,7 +94,6 @@ export const signUp = async (req, res) => {
           .json({ message: "Password and confirmPassword do not match" });
       }
       const encryption = hashValue(password);
-      //  const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
       const otp = generateOTP();
       const otpExpiry = Date.now() + 10 * 60 * 1000;
 
@@ -229,7 +227,7 @@ export const resetPasswordMail = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const { id } = req.params;
+  const {id}  = req.params;
   const { password } = req.body;
   try {
     const user = await User.findById(id);
