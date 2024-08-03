@@ -1,5 +1,6 @@
 import User from "../models/usermodel.js";
 import Ticket from "../models/ticketsmodel.js";
+import Event from "../models/eventmodel.js";
 import cloudinaryMediaUpload from "../config/cloudinary.js";
 
 export const updateUser = async (req, res) => {
@@ -85,3 +86,20 @@ export const getTicketsSold  = async (req,res) => {
   }
 
 }
+
+export const getEventsMade = async (req, res) => {
+  const userId = req.params.id;
+  try {
+  
+    const eventsmadeCount = await Event.countDocuments({ postedBy: userId });
+    const events = await Event.find({ postedBy: userId });
+
+    res.status(200).json({ eventsMade: eventsmadeCount,events});
+  } catch (error) {
+    console.error("Error fetching events made:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
